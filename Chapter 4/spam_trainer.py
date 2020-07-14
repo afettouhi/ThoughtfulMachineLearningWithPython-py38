@@ -99,23 +99,14 @@ class SpamTrainer(object):
 
         cat_totals = self.totals
 
-        aggregates = {cat: self.class_log_prior[cat] for cat in self.categories}
+        aggregates = {cat: cat_totals[cat] / cat_totals['_all'] for cat in self.categories}
 
         for token in Tokenizer.unique_tokenizer(email.body()):
             for cat in self.categories:
                 value = self.training[cat][token]
-                r = math.log((value + 1) / (cat_totals[cat] + self.B))
-                aggregates[cat] += r
-        max_val = (
-            aggregates["spam"]
-            if aggregates["spam"] > aggregates["ham"]
-            else aggregates["ham"]
-        )
-        aggregates["spam"] = math.exp(aggregates["spam"] - max_val)
-        aggregates["ham"] = math.exp(aggregates["ham"] - max_val)
-        norm_factor = aggregates["spam"] + aggregates["ham"]
-        aggregates["spam"] /= norm_factor
-        aggregates["ham"] /= norm_factor
+                r = (value + 1) / (cat_totals[cat] + 1)
+                aggregates[cat] *= r
+
         return aggregates
 
     def preference(self):
