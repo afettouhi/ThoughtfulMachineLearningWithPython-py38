@@ -34,7 +34,9 @@ class TestNetwork(unittest.TestCase):
 
     @parameterized.expand('English Finnish German Norwegian Polish Swedish'.split())
     def test_accuracy(self, lang):
-        """Trains and cross-validates with an error of 5%"""
+        """
+        Trains and cross-validates with an error of 5%
+        """
         print('Test for %s' % lang)
         self.compare(self.matthew_verses, '../data/%s_1.txt' % lang)
         self.compare(self.acts_verses, '../data/%s_0.txt' % lang)
